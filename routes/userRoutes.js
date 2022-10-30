@@ -17,7 +17,7 @@ const {
   userAppointments,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
-const upload = require("../utils/multer");
+const upload = require("../Utils/multer");
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
