@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const colors = require("colors");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const cors =require("cors");
 
 const connectDB = require("./config/db");
 
@@ -11,6 +12,9 @@ const app = express();
 // used to data  from body we need following middlewares 2 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cors());
+
 
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));

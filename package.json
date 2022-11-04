@@ -16,6 +16,7 @@
     "cloudinary": "^1.32.0",
     "colors": "^1.4.0",
     "concurrently": "^7.4.0",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "D": "^1.0.0",
     "dotenv": "^16.0.2",

@@ -1,8 +1,13 @@
-const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/heydoc',{
+const mongoose = require("mongoose");
 
-}).then(()=>{
-    console.log(`db connected`);
-}).catch((e)=>{
-    console.log(`db not connected`);
-})
+mongoose.connect(process.env.MONGO_URL);
+
+const connection = mongoose.connection;
+
+connection.on("connected", () => {
+  console.log("MongoDB connection is successful");
+});
+
+connection.on("error", (error) => {
+  console.log("Error in MongoDB connection", error);
+});

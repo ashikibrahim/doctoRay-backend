@@ -5,7 +5,7 @@ const Doctor = require("../models/doctorModel");
 const Appointment = require("../models/appointmentModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const cloudinary = require("../utils/cloudinary");
+const cloudinary = require("../Utils/cloudinary");
 const moment = require("moment");
 
 const doctorData = async (req, res) => {
@@ -79,15 +79,12 @@ const getDoctorById = async (req, res) => {
 };
 
 const getAppointments = async (req, res) => {
-  const userid = req.user._id;
-  console.log(userid, "uuuuuuuuuuuuuuuuuu");
+  // console.log(req.user._id,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
   try {
-    const doctor = await Doctor.findOne({ userId: userid });
-    console.log(doctor,"jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
-    const appointments = await Appointment.find({ doctorId: doctor._id }).sort({
-      _id: -1,
-    });
-    console.log(appointments,"apppppppppppppppppppppppppppppppppppppppppppppppppppp");
+    const doctor = await Doctor.findOne({userId:req.user._id});
+    // console.log(doctor,"jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
+    const appointments = await Appointment.find({doctorInfo_id:doctor._id})
+    // console.log(appointments,"apppppppppppppppppppppppppppppppppppppppppppppppppppp");
     res.status(200).json({
       message: "appointments fetched successfully",
       success: true,
@@ -100,9 +97,39 @@ const getAppointments = async (req, res) => {
   }
 };
 
+const changeAppointmentStatus= async(req,res)=>{
+  try {
+    const {appointmentId,status}= req.body;
+    console.log(status,"hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+    console.log(appointmentId,"adadadadadadadadadadadadadad");
+    const appointments = await Appointment.findByIdAndUpdate(appointmentId,{status});
+    console.log(appointments,"hhhhhhhhhhhhhhhhhhhhhh");
+    const user = await User.findOne({ _id: appointments.userId });
+    console.log(user, "usertttttttt");
+    const unseenNotifications = user.unseenNotifications;
+    unseenNotifications.push({
+      type: "user-appointment-request-changed",
+      message: `your appointment has been ${status}`,
+      onClickPath: "/appointments",
+    });
+      await user.save()
+
+    res.status(200).json({
+      message: "appointment status updated successfully",
+      success: true,
+      data: appointments,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "updation of status failed ", success: false, error });
+  }
+}
+
 module.exports = {
   doctorData,
   updateDoctorInfo,
   getDoctorById,
   getAppointments,
+  changeAppointmentStatus,
 };
